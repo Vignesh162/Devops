@@ -1,0 +1,81 @@
+To build a Docker image for a simple HTML web application, follow these steps. The application will serve a static HTML file using a lightweight web server like Nginx or Apache inside a Docker container.
+
+### Step-by-Step Guide
+
+#### 1. Create the HTML Web Application
+
+Start by creating a basic HTML file for the web application.
+
+- Create a project folder called `simple-web-app`.
+- Inside this folder, create an `index.html` file.
+
+Here’s an example of `index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web App</title>
+</head>
+<body>
+    <h1>Welcome to My Simple Web Application</h1>
+    <p>This is a basic HTML page served from a Docker container.</p>
+</body>
+</html>
+```
+
+#### 2. Create a `Dockerfile`
+
+Next, create a `Dockerfile` in the `simple-web-app` directory. This file contains the instructions for Docker to build the image.
+
+```Dockerfile
+# Use the official Nginx image as the base image
+FROM nginx:alpine
+
+# Copy the HTML file to the Nginx default html location
+COPY index.html /usr/share/nginx/html/
+
+# Expose port 80 to allow external traffic
+EXPOSE 80
+```
+
+#### 3. Build the Docker Image
+
+Now that you have the HTML file and the `Dockerfile`, open a terminal and navigate to the `simple-web-app` directory. Run the following command to build the Docker image:
+
+```bash
+docker build -t simple-web-app .
+```
+
+This command will build the image and tag it as `simple-web-app`.
+
+#### 4. Run the Docker Container
+
+Once the image is built, you can run it using the following command:
+
+```bash
+docker run -d -p 8080:80 simple-web-app
+```
+
+This will run the container in detached mode and map port 8080 on your local machine to port 80 in the container, where Nginx is serving the HTML file.
+
+#### 5. Access the Web Application
+
+Open your browser and navigate to `http://localhost:8080`. You should see the simple HTML web page with the message:
+
+```
+Welcome to My Simple Web Application
+This is a basic HTML page served from a Docker container.
+```
+
+### Summary
+
+You now have a Docker container running a simple HTML web application. The Dockerfile uses the official Nginx image, copies the HTML file into the correct directory, and exposes port 80 for the web server.
+
+### Files Overview:
+- `index.html`: Contains the HTML content.
+- `Dockerfile`: Instructions for building the Docker image.
+
+You can now build and deploy similar applications with ease!
