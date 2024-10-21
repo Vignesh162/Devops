@@ -1,0 +1,15 @@
+docker pull nginx
+
+docker images
+
+docker run -d -p 8080:80 nginx
+
+//Access the Nginx Server : Open web Browser and go to http://localhost:8080/
+
+docker ps
+
+docker stop <container_id> // enter the container id  in place of "<container_id>"
+
+docker rm<container_id> // remove the container once it is stopped
+
+docker rmi nginx //remove the docker image if no longer needed
