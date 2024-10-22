@@ -1,0 +1,126 @@
+Sure! Here's a **step-by-step guide** to setting up a Jenkins job for compiling and running a simple Java program **without using a pipeline**, using Jenkins' **Freestyle Project** configuration.
+
+### **Step-by-Step Guide to Configure Jenkins Freestyle Job for Java Program**
+
+#### **Prerequisites**:
+1. **Install Jenkins**: Make sure Jenkins is installed on your system.
+   - You can download Jenkins from [Jenkins.io](https://www.jenkins.io/).
+   - Jenkins requires **Java** (JDK) to be installed.
+   
+2. **Install JDK**: Ensure that **Java Development Kit (JDK)** is installed on the machine where Jenkins is running.
+   - Verify with: `java -version` and `javac -version`.
+   
+3. **Git Setup**: If your project is hosted on a Git repository (e.g., GitHub), install **Git** and configure it on Jenkins. This allows Jenkins to pull the latest code.
+
+---
+
+### **Step 1: Create a Git Repository for Your Java Code**
+1. Initialize a Git repository with your Java code.
+2. Add your `HelloWorld.java` file:
+
+   ```java
+   // File: HelloWorld.java
+
+   public class HelloWorld {
+       public static void main(String[] args) {
+           System.out.println("Hello, Jenkins! Continuous Integration with Java.");
+       }
+   }
+   ```
+
+3. Push your code to a remote repository like GitHub.
+
+---
+
+### **Step 2: Create a Jenkins Job**
+1. **Open Jenkins**: Go to Jenkins' web interface (typically `http://localhost:8080`).
+   
+2. **Create New Item**:
+   - Click on the **"New Item"** link on the left sidebar.
+   - Enter a name for your project (e.g., `Java-HelloWorld-Build`).
+   - Select **Freestyle Project**, then click **OK**.
+
+---
+
+### **Step 3: Configure the Source Code Management (SCM)**
+
+1. In the **Configure** page of your job:
+   
+2. **Source Code Management**:
+   - Select **Git** (if your code is hosted on a Git repository).
+   - In the **Repository URL** field, add the URL of your Git repository (e.g., `https://github.com/username/repository.git`).
+   - (Optional) If your repository is private, add your **credentials** to access it.
+   
+---
+
+### **Step 4: Configure the Build Trigger**
+1. **Build Triggers**:
+   - Scroll down to the **Build Triggers** section.
+   - Choose how Jenkins will trigger the build. For example:
+     - **Poll SCM**: Jenkins will check for changes in your Git repository at regular intervals (e.g., every 5 minutes).
+       - Add a schedule like: `H/5 * * * *` (every 5 minutes).
+     - **Build periodically**: Jenkins will run the build at specific times.
+     - **GitHub hook**: Jenkins will trigger the build when a change is pushed to the GitHub repository (for this, you will need to configure a webhook in GitHub).
+   
+---
+
+### **Step 5: Configure the Build Steps**
+1. **Build**:
+   - Scroll down to the **Build** section.
+   - Click on **Add build step** and select **Execute shell**.
+
+2. **Shell Commands**:
+   - In the shell command text box, enter the commands to compile and run your Java program. For example:
+   
+   ```bash
+   # Compile the Java program
+   javac HelloWorld.java
+
+   # Run the compiled Java program
+   java HelloWorld
+   ```
+
+   This will:
+   - **Compile** the `HelloWorld.java` file.
+   - **Run** the `HelloWorld` class after compilation.
+
+---
+
+### **Step 6: Save and Build**
+1. **Save the Job**: Once you've configured the build steps, click **Save** at the bottom of the page.
+
+2. **Build Now**:
+   - On the project dashboard, click **Build Now** to manually trigger a build.
+   - Jenkins will pull the latest code, compile it, and run the Java program.
+
+---
+
+### **Step 7: View the Build Output**
+1. **Check the Build Status**: After the build finishes, you’ll see the build result (e.g., Success/Failure) in the **Build History** section.
+   
+2. **Console Output**:
+   - Click on the build number (e.g., `#1`).
+   - Click on **Console Output** to see the full logs of the build process.
+   - If the build is successful, you should see:
+   
+   ```text
+   Hello, Jenkins! Continuous Integration with Java.
+   ```
+
+---
+
+### **Troubleshooting**:
+- **Compilation Errors**: If there are errors during compilation, the console output will show details of the error. Ensure that Java is properly installed, and the file structure is correct.
+- **Workspace Cleanup**: If you're facing issues with old compiled files, you can add a **Post-build Action** to clean the workspace after each build.
+
+---
+
+### **Optional**: Add Notifications (Slack/Email)
+You can also set up **email** or **Slack notifications** to alert you when the build is successful or fails.
+
+1. Go to the **Post-build Actions** section.
+2. Select the appropriate notification system (e.g., **E-mail Notification**, **Slack Notification**).
+
+---
+
+That's it! Now, Jenkins will automatically compile and run your Java program whenever you trigger a build or when there's a code change. Let me know if you need further assistance!
