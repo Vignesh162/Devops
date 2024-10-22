@@ -1,0 +1,203 @@
+To create a Jenkins pipeline that automates the process of building, testing, and running your Java program, follow these steps. A Jenkins pipeline allows you to define the entire CI/CD process in a script, making it more powerful and customizable than the freestyle job configuration.
+
+### **Step-by-Step Guide to Create a Jenkins Pipeline for a Java Program**
+
+#### **Prerequisites**:
+1. **Jenkins**: Jenkins must be installed and running.
+2. **Java**: Ensure **Java JDK** is installed on the Jenkins server.
+3. **Git**: Ensure **Git** is installed, and you have a Java project pushed to a Git repository.
+4. **Jenkins Git Plugin**: Jenkins must have the **Git plugin** installed.
+
+---
+
+### **Step 1: Create a Git Repository for Your Java Code**
+
+Ensure your Java program is in a Git repository. Here’s an example `HelloWorld.java`:
+
+```java
+// File: HelloWorld.java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, Jenkins! Continuous Integration with Java Pipeline.");
+    }
+}
+```
+
+Push this code to a Git repository, for example: `https://github.com/your-username/java-jenkins-pipeline.git`.
+
+---
+
+### **Step 2: Create a New Pipeline Job in Jenkins**
+
+1. **Open Jenkins**: Go to Jenkins' web interface (usually `http://localhost:8080`).
+2. **Create a New Item**:
+   - Click on the **"New Item"** link on the left sidebar.
+   - Enter a name for your pipeline (e.g., `JavaPipeline`).
+   - Select **Pipeline** from the list of options, then click **OK**.
+
+---
+
+### **Step 3: Define the Pipeline Script (Jenkinsfile)**
+
+Now, we will create the **Jenkinsfile**, which defines the steps of the pipeline. You can either:
+1. Write the Jenkinsfile in the job configuration or,
+2. Put the `Jenkinsfile` in your Git repository and have Jenkins automatically pick it up.
+
+#### **Option 1: Add Jenkinsfile in the Job Configuration**:
+1. Scroll down to the **Pipeline** section.
+2. Choose **Pipeline script**.
+3. Add the following pipeline script:
+
+1'''
+pipeline {
+agent any
+stages {
+stage('Build') {
+steps {
+echo 'Hi, GeekFlare. Starting to build the App.'
+}
+}
+stage('Test') {
+steps {
+input('Do you want to proceed?')
+}
+}
+stage('Deploy') {
+parallel {
+stage('Deploy start ') {
+steps {
+echo "Start the deploy .."
+}
+}
+stage('Deploying now') {
+agent {
+docker {
+reuseNode true
+image ‘nginx’
+}
+}
+steps {
+echo "Docker Created"
+}
+}
+}
+}
+stage('Prod') {
+steps {
+echo "App is Prod Ready"
+}
+}
+}
+}
+'''
+
+or 2 with Java
+```
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout source code from Git
+                git url: 'https://github.com/your-username/java-jenkins-pipeline.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Compile the Java program
+                sh 'javac HelloWorld.java'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run the Java program
+                sh 'java HelloWorld'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Test Successful!'
+        }
+        failure {
+            echo 'Build or Test Failed.'
+        }
+    }
+}
+```
+
+
+#### **Option 2: Use Jenkinsfile from the Git Repository**:
+
+1. In your Git repository, create a file called `Jenkinsfile` with the above content.
+2. In the **Pipeline** section of Jenkins, choose **Pipeline script from SCM**.
+3. Choose **Git** as the SCM, then provide the repository URL (e.g., `https://github.com/your-username/java-jenkins-pipeline.git`).
+4. If necessary, add your credentials (for private repositories).
+5. Specify the **Jenkinsfile** location in the repository (if it’s in the root folder, leave it as `Jenkinsfile`).
+
+---
+
+### **Step 4: Configure Pipeline Triggers (Optional)**
+
+If you want Jenkins to automatically trigger the pipeline when changes are pushed to the Git repository:
+1. Go to the **Build Triggers** section.
+2. Check **Poll SCM** if you want Jenkins to check for updates at regular intervals (e.g., every 5 minutes: `H/5 * * * *`).
+3. Alternatively, you can configure a **GitHub webhook** to trigger Jenkins when a commit is pushed.
+
+---
+
+### **Step 5: Save and Run the Pipeline**
+
+1. **Save the Job**: After configuring your pipeline, click **Save**.
+2. **Build Now**:
+   - On the pipeline dashboard, click **Build Now** to run the pipeline.
+   - Jenkins will start executing the pipeline steps, compiling and running your Java program.
+
+---
+
+### **Step 6: View the Pipeline Execution**
+
+Once the pipeline runs:
+1. You’ll see the pipeline execution stages on the Jenkins job page.
+2. Click on the **Build Number** (e.g., `#1`) to see detailed logs of each stage.
+3. Click on **Console Output** to see the output of each step.
+
+You should see something like this in the output:
+
+```text
+Hello, Jenkins! Continuous Integration with Java Pipeline.
+Build and Test Successful!
+```
+
+---
+
+### **Understanding the Pipeline Script**
+
+1. **Pipeline Block**:
+   - Defines the entire pipeline process.
+   - The `agent any` directive specifies that the pipeline can run on any available Jenkins agent.
+
+2. **Stages**:
+   - **Checkout**: This stage pulls the code from the Git repository.
+   - **Build**: This stage compiles the Java program using the `javac` command.
+   - **Test**: This stage runs the compiled Java program.
+
+3. **Post Block**:
+   - Executes actions after the pipeline completes.
+   - In this case, it echoes success or failure messages depending on the build result.
+
+---
+
+### **Step 7: Optional Enhancements**
+
+- **Email or Slack Notifications**: You can configure Jenkins to send notifications (via email or Slack) when a build fails or succeeds.
+- **JUnit Integration**: You can extend the pipeline to include testing using **JUnit** for automated test cases.
+- **Artifacts**: If you want to archive build artifacts (like compiled `.class` or `.jar` files), you can add steps for archiving and publishing.
+
+---
+
+That's it! You've successfully set up a Jenkins pipeline to automate the process of building and running your Java program. Let me know if you need help with more advanced configurations!
